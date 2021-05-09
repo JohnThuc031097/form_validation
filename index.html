@@ -51,14 +51,23 @@
   <script>
     const options = {
       form: '#form-1',
-      rules: [
-        Validator.isRequired('#fullname', 'Vui lòng điền đầy đủ tên'),
-        Validator.isEmail('#email', 'Email bạn nhập không hợp lệ'),
-        Validator.minLength('#password', 5),
-        Validator.isConfirmed('#password_confirmation', () => {
-          return $('#form-1 #password').value;
-        }, 'Mật khẩu nhập lại không khớp'),
-      ]
+      rules: {
+        '#fullname': [
+          { isRequired: ['Vui lòng nhập tên đầy đủ'] }
+        ],
+        '#email': [
+          { isRequired: ['Vui lòng nhập email'] },
+          { isEmail: ['Email bạn nhập không hợp lệ'] }
+        ],
+        '#password': [
+          { isRequired: ['Vui lòng nhập mật khẩu'] },
+          { minLength: [5, 'Độ dài chuỗi phải từ 5 kí tự'] },
+          { maxLength: [20, 'Độ dài chuỗi không quá 20 kí tự'] }
+        ],
+        '#password_confirmation': [
+          { isConfirmed: [() => $('#form-1 #password').value, 'Mật khẩu nhập lại không khớp'] }
+        ]
+      }
     };
     Validator.run(options);
   </script>
