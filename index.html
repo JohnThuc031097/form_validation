@@ -70,6 +70,12 @@
       }
     };
     Validator.run(options);
+    $(options.form).onsubmit = (e) => {
+      e.preventDefault();
+      Validator.submit((data) => {
+        console.log(data);
+      });
+    }
   </script>
 </body>
 

@@ -70,6 +70,24 @@ const Validator = {
       }
     }
   },
+  submit(callback) {
+    let dataValidate = {};
+    let eForm = $(options.form);
+    if (eForm) {
+      let rules = options.rules;
+      for (const selector in rules) {
+        let rulesSelector = rules[selector];
+        let eInput = $(selector);
+        if (eInput) {
+          this.checkError(rulesSelector, eInput.value.trim(), msgError => {
+            dataValidate[selector] = $(selector).value;
+            this.setError(eInput, msgError);
+          });
+        }
+      }
+    }
+    callback(dataValidate);
+  },
   checkError(rules, value, callback) {
     let msgError = '';
     rules.some(rule => {
