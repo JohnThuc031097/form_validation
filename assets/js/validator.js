@@ -1,4 +1,5 @@
 const $ = document.querySelector.bind(document);
+const $$ = document.querySelectorAll.bind(document);
 
 const ValidatorRules = {
   isRequired: (msg = 'Vui lòng nhập trường này!') => {
@@ -44,49 +45,55 @@ const ValidatorRules = {
 }
 
 const Validator = {
-
-  run(options) {
-    let eForm = $(options.form);
-    if (eForm) {
-      let rules = options.rules;
-      for (const selector in rules) {
-        let rulesSelector = rules[selector];
-        console.group(selector);
-        console.log(rulesSelector);
-        console.groupEnd();
-        let eInput = $(selector);
-        if (eInput) {
-          eInput.onblur = () => {
-            this.checkError(rulesSelector, eInput.value.trim(), msgError => {
-              this.setError(eInput, msgError);
-            });
-          };
-          eInput.oninput = () => {
-            this.checkError(rulesSelector, eInput.value.trim(), msgError => {
-              this.setError(eInput, msgError);
-            });
-          };
-        }
-      }
-    }
+  statusValidate: {},
+  options: {},
+  init(options) {
+    this.options = options;
+  },
+  run() {
+    this.rulesSelector((selector, rule, element) => {
+      console.group(selector);
+      console.log(rule);
+      console.groupEnd();
+      this.statusValidate[selector] = { error: true };
+      element.onblur = () => {
+        this.checkError(rule, element.value.trim(), msgError => {
+          this.statusValidate[selector].error = (typeof msgError !== 'undefined') ? true : false;
+          this.setError(element, msgError);
+        });
+      };
+      element.oninput = () => {
+        this.checkError(rule, element.value.trim(), msgError => {
+          this.statusValidate[selector].error = (typeof msgError !== 'undefined') ? true : false;
+          this.setError(element, msgError);
+        });
+      };
+    });
   },
   submit(callback) {
-    let dataValidate = {};
-    let eForm = $(options.form);
-    if (eForm) {
-      let rules = options.rules;
+    let isError = false;
+    let dataForm = {};
+    this.rulesSelector((selector, rule, element) => {
+      let isRequired = options.rules[selector].some(rule => rule['isRequired']);
+      if (this.statusValidate[selector].error && isRequired) {
+        this.checkError(rule, element.value.trim(), msgError => {
+          this.statusValidate[selector].error = (typeof msgError !== 'undefined') ? true : false;
+          this.setError(selector, msgError);
+          isError = true;
+        });
+      } else {
+        dataForm[selector] = element.value;
+      }
+    });
+    !isError && callback(dataForm);
+  },
+  rulesSelector(callback) {
+    if ($(this.options.formSelector)) {
+      let rules = this.options.rules;
       for (const selector in rules) {
-        let rulesSelector = rules[selector];
-        let eInput = $(selector);
-        if (eInput) {
-          this.checkError(rulesSelector, eInput.value.trim(), msgError => {
-            dataValidate[selector] = $(selector).value;
-            this.setError(eInput, msgError);
-          });
-        }
+        $(selector) && callback(selector, rules[selector], $(selector));
       }
     }
-    callback(dataValidate);
   },
   checkError(rules, value, callback) {
     let msgError = '';
@@ -96,13 +103,30 @@ const Validator = {
     });
     callback(msgError);
   },
-  setError(e, msgError) {
+  setError(selector, msgError) {
+    console.log(eBox, eMsg);
     if (msgError) {
-      e.parentElement && e.parentElement.classList.add('invalid');
-      e.nextElementSibling && (e.nextElementSibling.innerHTML = msgError);
+      eBox && eBox.classList.add('invalid');
+      eMsg && (eMsg.innerHTML = msgError);
     } else {
-      e.nextElementSibling && (e.nextElementSibling.innerHTML = '');
-      e.parentElement && e.parentElement.classList.remove('invalid');
+      eBox && eBox.classList.remove('invalid');
+      eMsg && (eMsg.innerHTML = '');
     }
+    // if (msgError) {
+    //   e.parentElement && e.parentElement.classList.add('invalid');
+    //   e.nextElementSibling && (e.nextElementSibling.innerHTML = msgError);
+    // } else {
+    //   e.nextElementSibling && (e.nextElementSibling.innerHTML = '');
+    //   e.parentElement && e.parentElement.classList.remove('invalid');
+    // }
+  },
+  getFormSelector() {
+    return $(this.options.formSelector);
+  },
+  getBoxSelector(selector) {
+    return this.getFormSelector().$(this.options.boxSelector[selector]);
+  },
+  getMsgSelector() {
+
   }
 };

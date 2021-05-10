@@ -50,7 +50,19 @@
   <script src="./assets/js/validator.js"></script>
   <script>
     const options = {
-      form: '#form-1',
+      formSelector: '#form-1',
+      boxSelector: {
+        '#fullname': '.form-group',
+        '#email': '.form-group',
+        '#password': '.form-group',
+        '#password_confirmation': '.form-group'
+      },
+      messageSelector: {
+        '#fullname': '.form-message',
+        '#email': '.form-message',
+        '#password': '.form-message',
+        '#password_confirmation': '.form-message',
+      },
       rules: {
         '#fullname': [
           { isRequired: ['Vui lòng nhập tên đầy đủ'] }
@@ -65,12 +77,15 @@
           { maxLength: [20, 'Độ dài chuỗi không quá 20 kí tự'] }
         ],
         '#password_confirmation': [
+          { isRequired: ['Vui lòng nhập lai mật khẩu'] },
           { isConfirmed: [() => $('#form-1 #password').value, 'Mật khẩu nhập lại không khớp'] }
         ]
       }
     };
-    Validator.run(options);
-    $(options.form).onsubmit = (e) => {
+
+    Validator.init(options);
+    Validator.run();
+    $(options.formSelector).onsubmit = (e) => {
       e.preventDefault();
       Validator.submit((data) => {
         console.log(data);
