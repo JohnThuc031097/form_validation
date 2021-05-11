@@ -104,6 +104,8 @@ const Validator = {
     callback(msgError);
   },
   setError(selector, msgError) {
+    let eBox = $(`${this.options.boxSelector[selector]} ${selector}`);
+    let eMsg = $(`${this.options.messageSelector[selector]} ${selector}`);
     console.log(eBox, eMsg);
     if (msgError) {
       eBox && eBox.classList.add('invalid');
@@ -120,13 +122,4 @@ const Validator = {
     //   e.parentElement && e.parentElement.classList.remove('invalid');
     // }
   },
-  getFormSelector() {
-    return $(this.options.formSelector);
-  },
-  getBoxSelector(selector) {
-    return this.getFormSelector().$(this.options.boxSelector[selector]);
-  },
-  getMsgSelector() {
-
-  }
 };
