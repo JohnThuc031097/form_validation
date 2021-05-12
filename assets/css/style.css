@@ -44,6 +44,38 @@ html {
   flex-direction: column;
 }
 
+.form-group__sex {
+  display: flex;
+  justify-content: center;
+  font-size: 16px;
+  border-radius: 3px;
+  border: 1px solid #b3b3b3;
+}
+
+.form-group__sex.invalid {
+  border: 1px solid #f33a58;
+}
+
+.form-group__sex.invalid ~ .form-message {
+  color: #f33a58;
+}
+
+.form-group__sex-select {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 20px;
+}
+
+.form-group__sex-select input {
+  cursor: pointer;
+}
+
+.form-group__sex-select span {
+  margin: 0 10px;
+  cursor: pointer;
+}
+
 .form-label,
 .form-message {
   text-align: left;

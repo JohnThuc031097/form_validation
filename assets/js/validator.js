@@ -56,33 +56,58 @@ const Validator = {
       console.log(rule);
       console.groupEnd();
       this.statusValidate[selector] = { error: true };
-      element.onblur = () => {
-        this.checkError(rule, element.value.trim(), msgError => {
-          this.statusValidate[selector].error = (typeof msgError !== 'undefined') ? true : false;
-          this.setError(element, msgError);
-        });
-      };
-      element.oninput = () => {
-        this.checkError(rule, element.value.trim(), msgError => {
-          this.statusValidate[selector].error = (typeof msgError !== 'undefined') ? true : false;
-          this.setError(element, msgError);
-        });
-      };
+      switch (element.type) {
+        case "radio":
+          $$(selector).forEach(e => {
+            e.onclick = () => {
+              this.checkError(selector, rule, msgError => {
+                this.statusValidate[selector].error = (typeof msgError !== 'undefined');
+                this.setError(selector, msgError);
+              });
+            }
+          })
+          break;
+        default:
+          element.onblur = () => {
+            this.checkError(selector, rule, msgError => {
+              this.statusValidate[selector].error = (typeof msgError !== 'undefined');
+              this.setError(selector, msgError);
+            });
+          };
+          element.oninput = () => {
+            this.checkError(selector, rule, msgError => {
+              this.statusValidate[selector].error = (typeof msgError !== 'undefined');
+              this.setError(selector, msgError);
+            });
+          };
+          break;
+      }
     });
   },
   submit(callback) {
     let isError = false;
     let dataForm = {};
-    this.rulesSelector((selector, rule, element) => {
+    this.rulesSelector((selector, rule) => {
       let isRequired = options.rules[selector].some(rule => rule['isRequired']);
       if (this.statusValidate[selector].error && isRequired) {
-        this.checkError(rule, element.value.trim(), msgError => {
-          this.statusValidate[selector].error = (typeof msgError !== 'undefined') ? true : false;
+        this.checkError(selector, rule, msgError => {
+          this.statusValidate[selector].error = (typeof msgError !== 'undefined');
           this.setError(selector, msgError);
           isError = true;
         });
       } else {
-        dataForm[selector] = element.value;
+        let value = undefined;
+        switch ($(selector).type) {
+          case "radio":
+            [...$$(selector)].forEach((e) => {
+              if (e.checked) return (value = e.value);
+            });
+            break;
+          default:
+            value = $(selector).value;
+            break;
+        }
+        dataForm[selector] = value;
       }
     });
     !isError && callback(dataForm);
@@ -95,8 +120,18 @@ const Validator = {
       }
     }
   },
-  checkError(rules, value, callback) {
-    let msgError = '';
+  checkError(selector, rules, callback) {
+    let msgError = undefined;
+    let value = '';
+    switch ($(selector).type) {
+      case 'radio':
+        let elements = $$(selector);
+        [...elements].some(e => e.checked) && (value = 'radio is checked');
+        break;
+      default:
+        value = $(selector).value.trim();
+        break;
+    }
     rules.some(rule => {
       let key = Object?.keys(rule)[0];
       return (msgError = ValidatorRules[key](...rule[key]).test(value));
@@ -104,9 +139,9 @@ const Validator = {
     callback(msgError);
   },
   setError(selector, msgError) {
-    let eBox = $(`${this.options.boxSelector[selector]} ${selector}`);
-    let eMsg = $(`${this.options.messageSelector[selector]} ${selector}`);
-    console.log(eBox, eMsg);
+    let eBox = $(this.options.boxSelector[selector]).parentElement;
+    let eMsg = $(this.options.messageSelector[selector]);
+    // console.log(eBox, eMsg);
     if (msgError) {
       eBox && eBox.classList.add('invalid');
       eMsg && (eMsg.innerHTML = msgError);
@@ -114,12 +149,5 @@ const Validator = {
       eBox && eBox.classList.remove('invalid');
       eMsg && (eMsg.innerHTML = '');
     }
-    // if (msgError) {
-    //   e.parentElement && e.parentElement.classList.add('invalid');
-    //   e.nextElementSibling && (e.nextElementSibling.innerHTML = msgError);
-    // } else {
-    //   e.nextElementSibling && (e.nextElementSibling.innerHTML = '');
-    //   e.parentElement && e.parentElement.classList.remove('invalid');
-    // }
   },
 };
