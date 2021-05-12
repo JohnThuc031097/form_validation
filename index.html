@@ -26,20 +26,49 @@
 
       <div class="form-group">
         <label for="sex" class="form-label">Giới tính</label>
-        <div class="form-group__sex">
-          <div class="form-group__sex-select">
-            <input value="Nam" name="sex" type="radio" class="form-control">
+        <div class="form-radio-group">
+          <div class="form-radio-group__item">
+            <input value="Male" name="sex" type="radio" class="form-control">
             <span>Nam</span>
           </div>
-          <div class="form-group__sex-select">
-            <input value="Nữ" name="sex" type="radio" class="form-control">
+          <div class="form-radio-group__item">
+            <input value="Female" name="sex" type="radio" class="form-control">
             <span>Nữ</span>
           </div>
-          <div class="form-group__sex-select">
-            <input value="Khác" name="sex" type="radio" class="form-control">
+          <div class="form-radio-group__item">
+            <input value="Other" name="sex" type="radio" class="form-control">
             <span>Khác</span>
           </div>
         </div>
+        <span class="form-message"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="language" class="form-label">Ngôn ngữ lập trình</label>
+        <div class="form-checkbox-group">
+          <div class="form-checkbox-group__item">
+            <input value="HTML" name="language" type="checkbox" class="form-control">
+            <span>HTML</span>
+          </div>
+          <div class="form-checkbox-group__item">
+            <input value="CSS" name="language" type="checkbox" class="form-control">
+            <span>CSS</span>
+          </div>
+          <div class="form-checkbox-group__item">
+            <input value="Javascript" name="language" type="checkbox" class="form-control">
+            <span>Javascript</span>
+          </div>
+        </div>
+        <span class="form-message"></span>
+      </div>
+
+      <div class="form-group">
+        <label for="city" class="form-label">Tỉnh thành</label>
+        <select id="city" name="city" class="form-control">
+          <option value=""> --- Tỉnh/Thành --- </option>
+          <option value="TP">Hồ Chí Minh</option>
+          <option value="HN">Hà Nội</option>
+        </select>
         <span class="form-message"></span>
       </div>
 
@@ -72,14 +101,18 @@
       formSelector: '#form-1',
       boxSelector: {
         '#fullname': '.form-group #fullname',
-        'input[name="sex"]': '.form-group__sex .form-group__sex-select',
+        'input[name="sex"]': '.form-radio-group .form-radio-group__item',
+        'input[name="language"]': '.form-checkbox-group .form-checkbox-group__item',
+        '#city': '.form-group #city',
         '#email': '.form-group #email',
         '#password': '.form-group #password',
         '#password_confirmation': '.form-group #password_confirmation'
       },
       messageSelector: {
         '#fullname': '#fullname ~ .form-message',
-        'input[name="sex"]': '.form-group__sex ~ .form-message',
+        'input[name="sex"]': '.form-checkbox-group ~ .form-message',
+        'input[name="language"]': '.form-checkbox-group ~ .form-message',
+        '#city': '#city ~ .form-message',
         '#email': '#email ~ .form-message',
         '#password': '#password ~ .form-message',
         '#password_confirmation': '#password_confirmation ~ .form-message',
@@ -91,8 +124,13 @@
         'input[name="sex"]': [
           { isRequired: ['Vui lòng chọn giới tính'] }
         ],
+        'input[name="language"]': [
+          { isRequired: ['Vui lòng chọn 1 ngôn ngữ lập trình'] }
+        ],
+        '#city': [
+          { isRequired: ['Vui lòng chọn tỉnh thành'] }
+        ],
         '#email': [
-          // { isRequired: ['Vui lòng nhập email'] },
           { isEmail: ['Email bạn nhập không hợp lệ'] }
         ],
         '#password': [

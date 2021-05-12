@@ -51,16 +51,16 @@ const Validator = {
     this.options = options;
   },
   run() {
-    this.rulesSelector((selector, rule, element) => {
+    this.rulesSelector((selector, element, rules, isRequired) => {
       console.group(selector);
-      console.log(rule);
+      console.log(rules);
       console.groupEnd();
       this.statusValidate[selector] = { error: true };
       switch (element.type) {
         case "radio":
           $$(selector).forEach(e => {
             e.onclick = () => {
-              this.checkError(selector, rule, msgError => {
+              this.checkError(selector, element, rules, msgError => {
                 this.statusValidate[selector].error = (typeof msgError !== 'undefined');
                 this.setError(selector, msgError);
               });
@@ -69,13 +69,13 @@ const Validator = {
           break;
         default:
           element.onblur = () => {
-            this.checkError(selector, rule, msgError => {
+            this.checkError(selector, element, rules, msgError => {
               this.statusValidate[selector].error = (typeof msgError !== 'undefined');
-              this.setError(selector, msgError);
+              this.setError(selector, isRequired && msgError);
             });
           };
           element.oninput = () => {
-            this.checkError(selector, rule, msgError => {
+            this.checkError(selector, element, rules, msgError => {
               this.statusValidate[selector].error = (typeof msgError !== 'undefined');
               this.setError(selector, msgError);
             });
@@ -87,24 +87,23 @@ const Validator = {
   submit(callback) {
     let isError = false;
     let dataForm = {};
-    this.rulesSelector((selector, rule) => {
-      let isRequired = options.rules[selector].some(rule => rule['isRequired']);
+    this.rulesSelector((selector, element, rules, isRequired) => {
       if (this.statusValidate[selector].error && isRequired) {
-        this.checkError(selector, rule, msgError => {
+        this.checkError(selector, element, rules, msgError => {
           this.statusValidate[selector].error = (typeof msgError !== 'undefined');
           this.setError(selector, msgError);
           isError = true;
         });
       } else {
         let value = undefined;
-        switch ($(selector).type) {
+        switch (element.type) {
           case "radio":
             [...$$(selector)].forEach((e) => {
               if (e.checked) return (value = e.value);
             });
             break;
           default:
-            value = $(selector).value;
+            value = element.value.trim();
             break;
         }
         dataForm[selector] = value;
@@ -116,20 +115,23 @@ const Validator = {
     if ($(this.options.formSelector)) {
       let rules = this.options.rules;
       for (const selector in rules) {
-        $(selector) && callback(selector, rules[selector], $(selector));
+        if ($(selector)) {
+          let isRequired = options.rules[selector].some(rule => rule['isRequired']);
+          callback(selector, $(selector), rules[selector], isRequired);
+        }
       }
     }
   },
-  checkError(selector, rules, callback) {
+  checkError(selector, element, rules, callback) {
     let msgError = undefined;
     let value = '';
-    switch ($(selector).type) {
+    switch (element.type) {
       case 'radio':
         let elements = $$(selector);
-        [...elements].some(e => e.checked) && (value = 'radio is checked');
+        [...elements].some(e => e.checked) && (value = 'checked');
         break;
       default:
-        value = $(selector).value.trim();
+        value = element.value.trim();
         break;
     }
     rules.some(rule => {

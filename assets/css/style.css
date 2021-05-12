@@ -44,7 +44,7 @@ html {
   flex-direction: column;
 }
 
-.form-group__sex {
+.form-radio-group {
   display: flex;
   justify-content: center;
   font-size: 16px;
@@ -52,28 +52,45 @@ html {
   border: 1px solid #b3b3b3;
 }
 
-.form-group__sex.invalid {
+.form-checkbox-group {
+  display: flex;
+  flex-direction: column;
+  font-size: 16px;
+  border-radius: 3px;
+  border: 1px solid #b3b3b3;
+}
+
+.form-radio-group.invalid,
+.form-checkbox-group.invalid {
   border: 1px solid #f33a58;
 }
 
-.form-group__sex.invalid ~ .form-message {
+.form-radio-group.invalid ~ .form-message,
+.form-checkbox-group.invalid ~ .form-message {
   color: #f33a58;
 }
 
-.form-group__sex-select {
+.form-radio-group__item input,
+.form-checkbox-group__item input {
+  cursor: pointer;
+}
+
+.form-radio-group__item span,
+.form-checkbox-group__item span {
+  margin: 0 10px;
+  cursor: pointer;
+}
+
+.form-radio-group__item {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-left: 20px;
 }
-
-.form-group__sex-select input {
-  cursor: pointer;
-}
-
-.form-group__sex-select span {
-  margin: 0 10px;
-  cursor: pointer;
+.form-checkbox-group__item {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
 }
 
 .form-label,
