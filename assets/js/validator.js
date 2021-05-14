@@ -139,7 +139,7 @@ const Validator = {
       let rules = this.options.rules;
       for (const selector in rules) {
         if ($(selector)) {
-          let isRequired = options.rules[selector].some(rule => rule['isRequired']);
+          let isRequired = rules[selector].some(rule => rule['isRequired']);
           callback(selector, $(selector), rules[selector], isRequired);
         }
       }
