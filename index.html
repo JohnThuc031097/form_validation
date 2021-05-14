@@ -73,6 +73,12 @@
       </div>
 
       <div class="form-group">
+        <label for="avatar" class="form-label">Ảnh dại diện</label>
+        <input id="avatar" name="avatar" type="file" class="form-control">
+        <span class="form-message"></span>
+      </div>
+
+      <div class="form-group">
         <label for="email" class="form-label">Email</label>
         <input id="email" name="email" type="text" placeholder="VD: email@domain.com" class="form-control">
         <span class="form-message"></span>
@@ -104,42 +110,48 @@
         'input[name="sex"]': '.form-radio-group .form-radio-group__item',
         'input[name="language"]': '.form-checkbox-group .form-checkbox-group__item',
         '#city': '.form-group #city',
+        '#avatar': '.form-group #avatar',
         '#email': '.form-group #email',
         '#password': '.form-group #password',
         '#password_confirmation': '.form-group #password_confirmation'
       },
       messageSelector: {
         '#fullname': '#fullname ~ .form-message',
-        'input[name="sex"]': '.form-checkbox-group ~ .form-message',
+        'input[name="sex"]': '.form-radio-group ~ .form-message',
         'input[name="language"]': '.form-checkbox-group ~ .form-message',
         '#city': '#city ~ .form-message',
+        '#avatar': '#avatar ~ .form-message',
         '#email': '#email ~ .form-message',
         '#password': '#password ~ .form-message',
         '#password_confirmation': '#password_confirmation ~ .form-message',
       },
       rules: {
         '#fullname': [
-          { isRequired: ['Vui lòng nhập tên đầy đủ'] }
+          // { isRequired: ['Vui lòng nhập tên đầy đủ'] }
         ],
         'input[name="sex"]': [
-          { isRequired: ['Vui lòng chọn giới tính'] }
+          // { isRequired: ['Vui lòng chọn giới tính'] }
         ],
         'input[name="language"]': [
-          { isRequired: ['Vui lòng chọn 1 ngôn ngữ lập trình'] }
+          { isRequired: ['Vui lòng chọn 1 ngôn ngữ lập trình'] },
+          { minChecked: [2, 'Vui lòng chọn tối thiểu 2 giá trị'] }
         ],
         '#city': [
-          { isRequired: ['Vui lòng chọn tỉnh thành'] }
+          // { isRequired: ['Vui lòng chọn tỉnh thành'] }
+        ],
+        '#avatar': [
+          { isRequired: ['Vui lòng chọn ảnh'] }
         ],
         '#email': [
           { isEmail: ['Email bạn nhập không hợp lệ'] }
         ],
         '#password': [
-          { isRequired: ['Vui lòng nhập mật khẩu'] },
+          // { isRequired: ['Vui lòng nhập mật khẩu'] },
           { minLength: [5, 'Độ dài chuỗi phải từ 5 kí tự'] },
           { maxLength: [20, 'Độ dài chuỗi không quá 20 kí tự'] }
         ],
         '#password_confirmation': [
-          { isRequired: ['Vui lòng nhập lai mật khẩu'] },
+          // { isRequired: ['Vui lòng nhập lai mật khẩu'] },
           { isConfirmed: [() => $('#form-1 #password').value, 'Mật khẩu nhập lại không khớp'] }
         ]
       }

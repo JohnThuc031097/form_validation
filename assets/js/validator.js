@@ -41,7 +41,15 @@ const ValidatorRules = {
         return (value === callback() ? undefined : msg);
       }
     }
-  }
+  },
+
+  minChecked: (min, msg = 'Giá trị chọn tối thiểu không đủ') => {
+    return {
+      test(values) {
+        return (values < min ? msg : undefined);
+      }
+    };
+  },
 }
 
 const Validator = {
@@ -60,7 +68,17 @@ const Validator = {
         case "radio":
           $$(selector).forEach(e => {
             e.onclick = () => {
-              this.checkError(selector, element, rules, msgError => {
+              this.checkError(selector, e, rules, msgError => {
+                this.statusValidate[selector].error = (typeof msgError !== 'undefined');
+                this.setError(selector, msgError);
+              });
+            }
+          })
+          break;
+        case "checkbox":
+          $$(selector).forEach(e => {
+            e.onclick = () => {
+              this.checkError(selector, e, rules, msgError => {
                 this.statusValidate[selector].error = (typeof msgError !== 'undefined');
                 this.setError(selector, msgError);
               });
@@ -97,10 +115,15 @@ const Validator = {
       } else {
         let value = undefined;
         switch (element.type) {
-          case "radio":
+          case 'radio':
             [...$$(selector)].forEach((e) => {
-              if (e.checked) return (value = e.value);
+              return (e.checked) && (value = e.value);
             });
+            break;
+          case 'checkbox':
+            value = [...$$(selector)].reduce((total, e) => {
+              return (e.checked) ? (total = [...total, e.value]) : total;
+            }, []);
             break;
           default:
             value = element.value.trim();
@@ -127,8 +150,13 @@ const Validator = {
     let value = '';
     switch (element.type) {
       case 'radio':
-        let elements = $$(selector);
-        [...elements].some(e => e.checked) && (value = 'checked');
+        [...$$(selector)].some(e => e.checked) && (value = 'checked');
+        break;
+      case 'checkbox':
+        value = [...$$(selector)].reduce((total, e) => {
+          return e.checked ? (total + 1) : total;
+        }, 0);
+        value = (value === 0) ? '' : value;
         break;
       default:
         value = element.value.trim();
